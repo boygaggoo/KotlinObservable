@@ -39,7 +39,10 @@ fun <V: View,T> V.bind(observable: Observable<T>, onChange:V.(T)->Unit):V{
         override fun onChanged(value: T) = onChange(value)
     }
     addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
-        override fun onViewAttachedToWindow(p0: View?) = observable.addListener(listener)
+        override fun onViewAttachedToWindow(p0: View?) {
+            observable.addListener(listener)
+            listener.onChanged(observable.value)
+        }
         override fun onViewDetachedFromWindow(p0: View?) = observable.removeListener(listener)
     })
     observable.addListener(listener)
