@@ -1,14 +1,19 @@
 package com.kotlinobservable
 
+import android.os.Handler
 import com.kotlinobservable.ObservableList
 import com.kotlinobservable.Observable
 import java.util.*
 
-class ObservableArrayList<T>: ObservableList<T>, ArrayList<T> {
-    constructor(initialCapacity: Int) : super(initialCapacity)
-    constructor() : super()
-    constructor(c: MutableCollection<out T>?) : super(c)
-
+open class ObservableArrayList<T>: ObservableList<T>, ArrayList<T> {
+    @Transient private val listeners= hashSetOf<Observable.OnChangeListener<List<T>>>()
+    @Transient private val handler: Handler?
+    constructor(initialCapacity: Int) : super(initialCapacity){this.handler=null}
+    constructor() : super(){this.handler=null}
+    constructor(c: MutableCollection<out T>?) : super(c){this.handler=null}
+    constructor(handler:Handler,initialCapacity: Int) : super(initialCapacity){this.handler=handler}
+    constructor(handler:Handler) : super(){this.handler=handler}
+    constructor(handler:Handler,c: MutableCollection<out T>?) : super(c){this.handler=handler}
     override var value: List<T>
         get() = this
         set(value) {
@@ -16,8 +21,6 @@ class ObservableArrayList<T>: ObservableList<T>, ArrayList<T> {
             super.addAll(value)
             notifyChanged()
         }
-
-    private val listeners= hashSetOf<Observable.OnChangeListener<List<T>>>()
 
     override fun add(element: T): Boolean {
         add(size,element)
@@ -85,27 +88,27 @@ class ObservableArrayList<T>: ObservableList<T>, ArrayList<T> {
     }
 
     override fun notifyChanged() {
-        listeners.forEach { it.onChanged(this) }
+        listeners.forEach { handler.optPost { it.onChanged(this)} }
     }
 
     override fun notifyInserted(index: Int, elements:List<T>) {
         listeners.forEach {
-            if(it is ObservableList.OnListChangedListener<T>) it.onItemsInserted(this,index,elements)
-            else it.onChanged(this)
+            if(it is ObservableList.OnListChangedListener<T>) handler.optPost { it.onItemsInserted(this,index,elements) }
+            else handler.optPost { it.onChanged(this) }
         }
     }
 
     override fun notifyRemoved(index: Int, elements:List<T>) {
         listeners.forEach {
-            if(it is ObservableList.OnListChangedListener<T>) it.onItemsRemoved(this,index,elements)
+            if(it is ObservableList.OnListChangedListener<T>) handler.optPost { it.onItemsRemoved(this,index,elements) }
             else it.onChanged(this)
         }
     }
 
     override fun notifyChanged(index: Int, elements:List<T>) {
         listeners.forEach {
-            if(it is ObservableList.OnListChangedListener<T>) it.onItemsChanged(this,index,elements)
-            else it.onChanged(this)
+            if(it is ObservableList.OnListChangedListener<T>) handler.optPost { it.onItemsChanged(this,index,elements) }
+            else handler.optPost { it.onChanged(this) }
         }
     }
 }

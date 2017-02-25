@@ -1,8 +1,11 @@
 package com.kotlinobservable
 
+import android.os.Handler
+import java.io.Serializable
 import kotlin.properties.Delegates
 
-class ObservableField<T>(value:T,onChange:((T)->Unit)?=null) : Observable<T> {
+open class ObservableField<T>(value:T,onChange:((T)->Unit)?=null,@Transient private val handler:Handler?=null) : Observable<T> {
+    @Transient
     private val listeners= hashSetOf<Observable.OnChangeListener<T>>()
     override var value by Delegates.observable(value){ prop, old, new->
         if(old==new)return@observable
@@ -12,7 +15,7 @@ class ObservableField<T>(value:T,onChange:((T)->Unit)?=null) : Observable<T> {
     init {
         if(onChange!=null){
             listeners.add(object : Observable.OnChangeListener<T> {
-                override fun onChanged(value: T) = onChange(value)
+                override fun onChanged(value: T) = handler.optPost { onChange(value) }
             })
         }
     }
@@ -26,6 +29,6 @@ class ObservableField<T>(value:T,onChange:((T)->Unit)?=null) : Observable<T> {
     }
 
     override fun notifyChanged() {
-        listeners.forEach { it.onChanged(value) }
+        listeners.forEach { handler.optPost { it.onChanged(value) }}
     }
 }

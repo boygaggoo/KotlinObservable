@@ -1,8 +1,9 @@
 package com.kotlinobservable
 
 import android.view.View
+import java.io.Serializable
 
-interface Observable<T>{
+interface Observable<T>:Serializable{
     fun addListener(listener: OnChangeListener<T>)
     fun removeListener(listener: OnChangeListener<T>)
     fun notifyChanged()

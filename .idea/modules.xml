@@ -3,8 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/KotlinObservable.iml" filepath="$PROJECT_DIR$/KotlinObservable.iml" />
-      <module fileurl="file://$PROJECT_DIR$/KotlinObservable.iml" filepath="$PROJECT_DIR$/KotlinObservable.iml" />
-      <module fileurl="file://$PROJECT_DIR$/kotlin-observable/kotlin-observable.iml" filepath="$PROJECT_DIR$/kotlin-observable/kotlin-observable.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin-observable/kotlin-observable.iml" filepath="$PROJECT_DIR$/kotlin-observable/kotlin-observable.iml" />
     </modules>
   </component>

@@ -13,8 +13,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.BaseAdapter
+import java.io.Serializable
 
-interface ObservableList<T>:MutableList<T>, Observable<List<T>> {
+interface ObservableList<T>:MutableList<T>, Observable<List<T>>,Serializable {
     fun notifyInserted(index: Int,elements:List<T>)
     fun notifyRemoved(index: Int,elements:List<T>)
     fun notifyChanged(index: Int,elements:List<T>)
