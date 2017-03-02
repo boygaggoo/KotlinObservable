@@ -7,8 +7,9 @@ import android.view.ViewGroup
 class SimpleAdapter(private val count:()->Int, private val onCreateView:(ViewGroup, Int)-> View): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var onBindView: SimpleAdapter.(RecyclerView.ViewHolder)->Unit={}
     private var itemViewType:(Int)->Int={super.getItemViewType(it)}
+    private var extraElements:()->Int={0}
     override fun getItemViewType(position: Int): Int = itemViewType(position)
-    override fun getItemCount(): Int = count()
+    override fun getItemCount(): Int = count()+extraElements()
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = onBindView(holder)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view=onCreateView(parent,viewType)
@@ -23,6 +24,12 @@ class SimpleAdapter(private val count:()->Int, private val onCreateView:(ViewGro
 
     infix fun itemViewType(itemViewType:(Int)->Int): SimpleAdapter {
         this.itemViewType=itemViewType
+        notifyDataSetChanged()
+        return this
+    }
+
+    infix fun setExtraElements(extraElements:()->Int): SimpleAdapter{
+        this.extraElements=extraElements
         notifyDataSetChanged()
         return this
     }
