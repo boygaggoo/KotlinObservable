@@ -1,3 +1,4 @@
+## Deprecated, use [KotlinHelpeers](https://github.com/yzheka/KotlinHelpers)
 # KotlinObservable
 A set of data structures to get rid of adapters
 
